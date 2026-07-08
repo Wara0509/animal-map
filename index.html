@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Animal Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    body { margin: 0; }
+    #map { height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script>
+    const map = L.map('map').setView([33.97, 134.36], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    fetch('kamiyama_animals.geojson')
+      .then(res => res.json())
+      .then(data => {
+        L.geoJSON(data, {
+          onEachFeature: function(feature, layer) {
+            if (feature.properties) {
+              layer.bindPopup(
+                "場所：" + feature.properties.場所 + "<br>" +
+                "日時：" + feature.properties.日時 + "<br>" +
+                "動物：" + feature.properties.動物 + "<br>" +
+                "コメント：" + feature.properties.コメント
+              );
+            }
+          }
+        }).addTo(map);
+      });
+  </script>
+</body>
+</html>
